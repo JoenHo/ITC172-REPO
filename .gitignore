@@ -3,3 +3,6 @@
 env01/
 inary/
 .vscode/
+ClubApp/migrations
+ClubApp/_init_.py
+PythonClub/_init_.py
