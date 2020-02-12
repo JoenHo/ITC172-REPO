@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Meeting Detail</h1>
+<table class='table'>
+    <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Location</th>
+        <th>Agenda</th>
+    </tr>
+    <tr>
+        <td>{{meetingdetail.meetingtitle}}</td>
+        <td>{{meetingdetail.meetingdate}}</td>
+        <td>{{meetingdetail.meetingtime}}</td>
+        <td>{{meetingdetail.meetinglocation}}</td>
+        <td>{{meetingdetail.meetingagenda}}</td>
+    </tr>
+</table>
+{% endblock %}

@@ -5,17 +5,11 @@
     <tr>
         <th>Title</th>
         <th>Date</th>
-        <th>Time</th>
-        <th>Location</th>
-        <th>Agenda</th>
     </tr>
     {% for list in meeting_list %}
     <tr>
-        <td>{{list.meetingtitle}}</td>
+        <td><a href="{% url 'meetingdetail' id=list.id %}">{{list.meetingtitle}}</a></td>
         <td>{{list.meetingdate}}</td>
-        <td>{{list.meetingtime}}</td>
-        <td>{{list.meetinglocation}}</td>>
-        <td>{{list.meeetingagenda}}</td>
     </tr>
     {% endfor %}
 </table>

@@ -10,7 +10,7 @@ class Meeting(models.Model):
     meetingagenda = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return super().__str__()
+        return self.meetingtitle
 
     class Meta:
         db_table='meeting'
