@@ -17,9 +17,9 @@ class Meeting(models.Model):
         verbose_name_plural='meetings'
 
 class MeetingMinutes(models.Model):
-    meetingid = models.CharField(max_length=255)
+    meetingid = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     meetingattendance = models.ManyToManyField(User)
-    meetingminutes = models.CharField(max_length=255, null=True, blank=True)
+    meetingminutestext = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return super().__str__()
