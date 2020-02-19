@@ -19,7 +19,7 @@ class Meeting(models.Model):
 class MeetingMinutes(models.Model):
     meetingid = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     meetingattendance = models.ManyToManyField(User)
-    meetingminutestext = models.CharField(max_length=255, null=True, blank=True)
+    meetingminutestext = models.TextField()
 
     def __str__(self):
         return super().__str__()

@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import Meeting, MeetingMinutes, Resource, Event
 from .views import getmeeting, getmeetingminutes, getresource, getevent
+from .forms import MeetingForm, MeetingMinutesForm, ResourceForm, EventForm
 from django.urls import reverse
 from django.contrib.auth.models import User
 
@@ -93,4 +94,43 @@ class GetMeetingDetailTest(TestCase):
    def test_view_url_accessible_by_name(self):
        test=self.setUp()
        response = self.client.get(reverse('meetingdetail', args=(test.id,)))
-       self.assertEqual(response.status_code, 200)       
+       self.assertEqual(response.status_code, 200)
+
+# ==================
+# Testing Forms
+# ==================
+class Meeting_Form_Test(TestCase):
+    def test_meetingform_is_valid(self):
+        form=MeetingForm(data={'meetingtitle': "Hello", 'meetingdate': "2020-02-12", 'meetingtime': "18:00:00", 'meetinglocation': "Earth", 'meetingagenda': "Save the world!"})
+        self.assertTrue(form.is_valid())
+
+    def test_typeform_empty(self):
+        form=MeetingForm(data={'meetingtitle': ""})
+        self.assertFalse(form.is_valid())
+
+class MeetingMinutes_Form_Test(TestCase):
+    def test_meetingminutesform_is_valid(self):
+        form=MeetingMinutesForm(data={'meetingid': 1, 'meetingminutestext': "Hi Hi"})
+        self.assertTrue(form.is_valid())
+
+    def test_typeform_empty(self):
+        form=MeetingMinutesForm(data={'meetingminutestext': ""})
+        self.assertFalse(form.is_valid())
+
+class Resource_Form_Test(TestCase):
+    def test_resourceform_is_valid(self):
+        form=ResourceForm(data={'resourcename': "aaabbb", 'resourcetype': "url", 'resourceurl': "http://python", 'resourceuserid': "1", 'resourcedescription': "this is a link"})
+        self.assertTrue(form.is_valid())
+
+    def test_typeform_empty(self):
+        form=ResourceForm(data={'resourcename': ""})
+        self.assertFalse(form.is_valid())   
+
+class Event_Form_Test(TestCase):
+    def test_eventform_is_valid(self):
+        form=EventForm(data={'eventtitle': "Hi", 'eventlocation': "scc", 'eventdate': "2020-02-14", 'eventtime': "18:00:00", 'eventdescription': "aaabbbccc"})
+        self.assertTrue(form.is_valid())
+
+    def test_typeform_empty(self):
+        form=ResourceForm(data={'eventtitle': ""})
+        self.assertFalse(form.is_valid())
