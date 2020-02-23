@@ -10,7 +10,7 @@
     {% for list in meetingminutes_list %}
     <tr>
         <td>{{list.meetingid}}</td>
-        <td>{{list.meetingattendance}}</td>
+        <td>{{list.meetingattendance.all}}</td>
         <td>{{list.meetingminutestext}}</td>
     </tr>
     {% endfor %}

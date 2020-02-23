@@ -65,27 +65,27 @@ class EventTest(TestCase):
 class IndexTest(TestCase):
    def test_view_url_accessible_by_name(self):
        response = self.client.get(reverse('index'))
-       self.assertEqual(response.status_code, 200)
+       self.assertEqual(response.status_code, 302)
   
 class GetMeetingTest(TestCase):
    def test_view_url_accessible_by_name(self):
        response = self.client.get(reverse('meeting'))
-       self.assertEqual(response.status_code, 200)
+       self.assertEqual(response.status_code, 302)
 
 class GetMeetingMinutesTest(TestCase):
    def test_view_url_accessible_by_name(self):
        response = self.client.get(reverse('meetingminutes'))
-       self.assertEqual(response.status_code, 200)
+       self.assertEqual(response.status_code, 302)
 
 class GetResourceTest(TestCase):
    def test_view_url_accessible_by_name(self):
        response = self.client.get(reverse('resource'))
-       self.assertEqual(response.status_code, 200)
+       self.assertEqual(response.status_code, 302)
 
 class GetEventTest(TestCase):
    def test_view_url_accessible_by_name(self):
        response = self.client.get(reverse('event'))
-       self.assertEqual(response.status_code, 200)
+       self.assertEqual(response.status_code, 302)
 
 class GetMeetingDetailTest(TestCase):
    def setUp(self):
@@ -94,7 +94,7 @@ class GetMeetingDetailTest(TestCase):
    def test_view_url_accessible_by_name(self):
        test=self.setUp()
        response = self.client.get(reverse('meetingdetail', args=(test.id,)))
-       self.assertEqual(response.status_code, 200)
+       self.assertEqual(response.status_code, 302)
 
 # ==================
 # Testing Forms
@@ -110,7 +110,9 @@ class Meeting_Form_Test(TestCase):
 
 class MeetingMinutes_Form_Test(TestCase):
     def test_meetingminutesform_is_valid(self):
-        form=MeetingMinutesForm(data={'meetingid': 1, 'meetingminutestext': "Hi Hi"})
+        self.test_user=User.objects.create_user(username='testuser1', password='P@ssw0rd1')
+        self.test_meeting=Meeting.objects.create(meetingtitle="Hello", meetingdate="2020-02-12", meetingtime="18:00:00", meetinglocation="Earth", meetingagenda="Save the world!")
+        form=MeetingMinutesForm(data={'meetingid': self.test_meeting, 'meetingattendance': {self.test_user}, 'meetingminutestext': "Hi Hi"})
         self.assertTrue(form.is_valid())
 
     def test_typeform_empty(self):
@@ -119,7 +121,8 @@ class MeetingMinutes_Form_Test(TestCase):
 
 class Resource_Form_Test(TestCase):
     def test_resourceform_is_valid(self):
-        form=ResourceForm(data={'resourcename': "aaabbb", 'resourcetype': "url", 'resourceurl': "http://python", 'resourceuserid': "1", 'resourcedescription': "this is a link"})
+        self.test_user=User.objects.create_user(username='testuser1', password='P@ssw0rd1')
+        form=ResourceForm(data={'resourcename': "aaabbb", 'resourcetype': "url", 'resourceurl': "http://python", 'recourcedateentered':"2020-02-19", 'resourceuserid': self.test_user, 'resourcedescription': "this is a link"})
         self.assertTrue(form.is_valid())
 
     def test_typeform_empty(self):
@@ -128,9 +131,29 @@ class Resource_Form_Test(TestCase):
 
 class Event_Form_Test(TestCase):
     def test_eventform_is_valid(self):
-        form=EventForm(data={'eventtitle': "Hi", 'eventlocation': "scc", 'eventdate': "2020-02-14", 'eventtime': "18:00:00", 'eventdescription': "aaabbbccc"})
+        self.test_user=User.objects.create_user(username='testuser1', password='P@ssw0rd1')
+        form=EventForm(data={'eventtitle': "Hi", 'eventlocation': "scc", 'eventdate': "2020-02-14", 'eventtime': "18:00:00", 'eventdescription': "aaabbbccc", 'eventuser': self.test_user})
         self.assertTrue(form.is_valid())
 
     def test_typeform_empty(self):
         form=ResourceForm(data={'eventtitle': ""})
         self.assertFalse(form.is_valid())
+
+# ==================
+# Testing Authentication
+# ==================
+class Authentication_test(TestCase):
+    def setUp(self):
+        self.test_user=User.objects.create_user(username='testuser1', password='P@ssw0rd1')
+        self.mtg=Meeting.objects.create(meetingtitle="Hello", meetingdate="2020-02-12", meetingtime="18:00:00", meetinglocation="Earth", meetingagenda="Save the world!")
+
+    def test_redirect_if_not_logged_in(self):
+        response=self.client.get(reverse('newmeeting'))
+        self.assertRedirects(response, '/accounts/login/?next=/ClubApp/newMeeting/')
+
+    def test_Logged_in_uses_correct_template(self):
+        login=self.client.login(username='testuser1', password='P@ssw0rd1')
+        response=self.client.get(reverse('newmeeting'))
+        self.assertEqual(str(response.context['user']), 'testuser1')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ClubApp/newMeeting.html')
